@@ -16,7 +16,8 @@ return {
 	},
 
 	-- GitHub Copilot
-	{ "github/copilot.vim" },
+	--{ "github/copilot.vim" },
+	{ "zbirenbaum/copilot.lua", config = true },
 
 	-- Git Signs (Gutter markers for Git changes)
 	{
