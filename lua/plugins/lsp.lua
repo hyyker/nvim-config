@@ -14,7 +14,9 @@ return {
 		lazy = false,
 		opts = {
 			ensure_installed = { "clangd", "rust_analyzer", "pyright", "lua_ls" },
-			automatic_installation = true,
+			-- Servers are enabled explicitly below via vim.lsp.enable(), so each
+			-- one keeps its custom settings instead of being auto-enabled bare.
+			automatic_enable = false,
 		},
 	},
 
