@@ -7,6 +7,11 @@ vim.g.maplocalleader = " "
 -- Allow more color options
 vim.opt.termguicolors = true
 
--- Load plugins and settings
-require "plugin_init"
-require "settings"
+-- Set the background before the colorscheme loads so it picks the right variant
+vim.opt.background = "dark"
+
+-- Load plugins, settings and keymaps
+require("plugin_init")
+require("settings")
+require("keymaps")
+require("autocmds")

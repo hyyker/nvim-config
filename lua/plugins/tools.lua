@@ -1,18 +1,16 @@
 return {
-	-- Auto-installer for tools (formatters & linters)
+	-- Auto-installer for CLI tools (formatters / linters not managed as LSPs)
 	{
 		"WhoIsSethDaniel/mason-tool-installer.nvim",
 		lazy = false,
+		dependencies = { "williamboman/mason.nvim" },
 		opts = {
 			ensure_installed = {
 				"stylua",
-				"black",
-				"isort",
 				"clang-format",
-				"flake8",
-				"cpplint",
 			},
-			auto_update = true,
+			auto_update = false,
+			run_on_start = true,
 		},
 	},
 
@@ -25,7 +23,7 @@ return {
 			{
 				"<leader>fm",
 				function()
-					require("conform").format({ async = true, lsp_fallback = true })
+					require("conform").format({ async = true, lsp_format = "fallback" })
 				end,
 				mode = "",
 				desc = "Format buffer",
@@ -34,42 +32,15 @@ return {
 		opts = {
 			formatters_by_ft = {
 				lua = { "stylua" },
-				python = { "isort", "black" },
+				python = { "ruff_organize_imports", "ruff_format" },
 				c = { "clang-format" },
 				cpp = { "clang-format" },
 				rust = { "rustfmt" },
 			},
 			format_on_save = {
 				timeout_ms = 500,
-				lsp_fallback = true,
+				lsp_format = "fallback",
 			},
 		},
-	},
-
-	-- Nvim-lint for asynchronous linting
-	{
-		"mfussenegger/nvim-lint",
-		event = { "BufReadPre", "BufNewFile" },
-		config = function()
-			local lint = require("lint")
-
-			lint.linters_by_ft = {
-				python = { "flake8" },
-				c = { "cpplint" },
-				cpp = { "cpplint" },
-			}
-
-			local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
-			vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
-				group = lint_augroup,
-				callback = function()
-					lint.try_lint()
-				end,
-			})
-
-			vim.keymap.set("n", "<leader>l", function()
-				lint.try_lint()
-			end, { desc = "Trigger linting for current file" })
-		end,
 	},
 }

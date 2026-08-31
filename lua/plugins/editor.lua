@@ -1,10 +1,9 @@
 return {
-	-- Plenary (Required dependency for Telescope, Remote-Nvim, etc.)
-	{ "nvim-lua/plenary.nvim" },
-
 	-- Telescope
 	{
 		"nvim-telescope/telescope.nvim",
+		dependencies = { "nvim-lua/plenary.nvim" },
+		cmd = "Telescope",
 		keys = {
 			{ "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
 			{ "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Recent Files" },
@@ -16,42 +15,34 @@ return {
 	},
 
 	-- GitHub Copilot
-	--{ "github/copilot.vim" },
-	{ "zbirenbaum/copilot.lua", config = true },
+	{
+		"zbirenbaum/copilot.lua",
+		event = "InsertEnter",
+		cmd = "Copilot",
+		config = true,
+	},
 
 	-- Git Signs (Gutter markers for Git changes)
 	{
 		"lewis6991/gitsigns.nvim",
-		config = function()
-			require("gitsigns").setup()
-		end,
+		event = { "BufReadPre", "BufNewFile" },
+		opts = {},
 	},
 
 	-- Autopairs (Automatically close brackets)
 	{
 		"windwp/nvim-autopairs",
-		config = function()
-			require("nvim-autopairs").setup()
-		end,
+		event = "InsertEnter",
+		opts = {},
 	},
 
 	-- Highlight trailing whitespace
 	{
 		"ntpeters/vim-better-whitespace",
-		config = function()
+		event = { "BufReadPost", "BufNewFile" },
+		init = function()
 			vim.g.better_whitespace_enabled = 1
+			vim.g.strip_whitespace_on_save = 0
 		end,
-	},
-
-	-- Remote Neovim (DevContainers / SSH)
-	{
-		"amitds1997/remote-nvim.nvim",
-		version = "*",
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"MunifTanjim/nui.nvim",
-			"nvim-telescope/telescope.nvim",
-		},
-		config = true,
 	},
 }

@@ -7,71 +7,66 @@ return {
 			vim.cmd("colorscheme gruvbox")
 		end,
 	},
-	{ "folke/tokyonight.nvim" },
-	{ "catppuccin/nvim" },
-	{ "sainnhe/everforest" },
-	{ "bettervim/yugen.nvim" },
-	{ "olivercederborg/poimandres.nvim" },
+	{ "folke/tokyonight.nvim", lazy = true },
+	{ "catppuccin/nvim", name = "catppuccin", lazy = true },
+	{ "sainnhe/everforest", lazy = true },
+	{ "bettervim/yugen.nvim", lazy = true },
+	{ "olivercederborg/poimandres.nvim", lazy = true },
 
 	-- Colorize hex codes
 	{
 		"norcalli/nvim-colorizer.lua",
+		event = { "BufReadPost", "BufNewFile" },
 		config = function()
 			require("colorizer").setup()
-		end,
-	},
-
-	-- Indentation guides
-	{
-		"lukas-reineke/indent-blankline.nvim",
-		main = "ibl",
-		opts = {},
-		config = function()
-			require("ibl").setup()
 		end,
 	},
 
 	-- Which-Key (Keybind helper menu)
 	{
 		"folke/which-key.nvim",
-		lazy = false,
-		config = function()
-			require("which-key").setup()
-		end,
+		event = "VeryLazy",
+		opts = {},
 	},
 
-	-- Dashboard
+	-- Dashboard, indent guides and misc QoL (replaces alpha-nvim + indent-blankline)
 	{
-		"goolord/alpha-nvim",
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		config = function()
-			local alpha = require("alpha")
-			local dashboard = require("alpha.themes.dashboard")
-
-			dashboard.section.header.val = {
-				"                                                     ",
-				"  ███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗ ",
-				"  ████╗  ██║██╔════╝██╔═══██╗██║   ██║██║████╗ ████║ ",
-				"  ██╔██╗ ██║█████╗  ██║   ██║██║   ██║██║██╔████╔██║ ",
-				"  ██║╚██╗██║██╔══╝  ██║   ██║╚██╗ ██╔╝██║██║╚██╔╝██║ ",
-				"  ██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║ ",
-				"  ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝ ",
-				"                                                     ",
-			}
-
-			dashboard.section.buttons.val = {
-				dashboard.button("e", "  > New file", ":ene <BAR> startinsert <CR>"),
-				dashboard.button("r", "   Recent", ":Telescope oldfiles <CR>"),
-				dashboard.button("f", "󰍉  > Find file", ":Telescope find_files <CR>"),
-				dashboard.button("g", "󰛓  > Find word", ":Telescope live_grep <CR>"),
-				dashboard.button("c", "  > Select color palette", ":Telescope colorscheme <CR>"),
-				dashboard.button("l", "  > Open Lazy", ":Lazy <CR>"),
-				dashboard.button("q", "󰩈  > Quit NVIM", ":qa<CR>"),
-			}
-			dashboard.section.footer.val = { "Be silly :3" }
-
-			alpha.setup(dashboard.opts)
-		end,
+		"folke/snacks.nvim",
+		priority = 1000,
+		lazy = false,
+		opts = {
+			bigfile = { enabled = true },
+			quickfile = { enabled = true },
+			indent = { enabled = true },
+			dashboard = {
+				preset = {
+					header = [[
+ ███╗   ██╗███████╗ ██████╗ ██╗   ██╗██╗███╗   ███╗
+ ████╗  ██║██╔════╝██╔═══██╗██║   ██║██║████╗ ████║
+ ██╔██╗ ██║█████╗  ██║   ██║██║   ██║██║██╔████╔██║
+ ██║╚██╗██║██╔══╝  ██║   ██║╚██╗ ██╔╝██║██║╚██╔╝██║
+ ██║ ╚████║███████╗╚██████╔╝ ╚████╔╝ ██║██║ ╚═╝ ██║
+ ╚═╝  ╚═══╝╚══════╝ ╚═════╝   ╚═══╝  ╚═╝╚═╝     ╚═╝]],
+					-- Icons as \u{} escapes so the bytes can't get mangled on save.
+					-- All are in the FontAwesome PUA range that every Nerd Font ships.
+					keys = {
+						{ icon = "\u{f067} ", key = "e", desc = "New File", action = ":ene | startinsert" },
+						{ icon = "\u{f1da} ", key = "r", desc = "Recent Files", action = ":Telescope oldfiles" },
+						{ icon = "\u{f002} ", key = "f", desc = "Find File", action = ":Telescope find_files" },
+						{ icon = "\u{f15c} ", key = "g", desc = "Find Text", action = ":Telescope live_grep" },
+						{ icon = "\u{f1fc} ", key = "c", desc = "Colorschemes", action = ":Telescope colorscheme" },
+						{ icon = "\u{f0e7} ", key = "l", desc = "Lazy", action = ":Lazy" },
+						{ icon = "\u{f011} ", key = "q", desc = "Quit", action = ":qa" },
+					},
+				},
+				sections = {
+					{ section = "header" },
+					{ section = "keys", gap = 1, padding = 1 },
+					{ section = "startup" },
+					{ text = "Be silly :3", align = "center", padding = 1 },
+				},
+			},
+		},
 	},
 
 	-- Status Line
@@ -83,10 +78,10 @@ return {
 			options = {
 				icons_enabled = true,
 				theme = "auto",
-				component_separators = { left = "", right = "" },
-				section_separators = { left = "", right = "" },
+				component_separators = { left = "", right = "" },
+				section_separators = { left = "", right = "" },
 				always_divide_middle = true,
-				globalstatus = false,
+				globalstatus = true,
 			},
 			sections = {
 				lualine_a = { "mode" },
