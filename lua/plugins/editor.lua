@@ -14,13 +14,13 @@ return {
 		},
 	},
 
-	-- GitHub Copilot
-	{
-		"zbirenbaum/copilot.lua",
-		event = "InsertEnter",
-		cmd = "Copilot",
-		config = true,
-	},
+	--	-- GitHub Copilot
+	--	{
+	--		"zbirenbaum/copilot.lua",
+	--		event = "InsertEnter",
+	--		cmd = "Copilot",
+	--		config = true,
+	--	},
 
 	-- Git Signs (Gutter markers for Git changes)
 	{
