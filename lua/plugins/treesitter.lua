@@ -14,7 +14,6 @@ return {
 					"cpp",
 					"lua",
 					"luadoc",
-					"nix",
 					"rust",
 					"python",
 					"bash",
