@@ -25,7 +25,7 @@ return {
 		lazy = false,
 		dependencies = { "williamboman/mason.nvim" },
 		opts = {
-			ensure_installed = { "clangd", "rust_analyzer", "pyright", "ruff", "lua_ls" },
+			ensure_installed = { "clangd", "pyright", "ruff", "lua_ls" },
 			-- Servers are enabled explicitly below via vim.lsp.enable(), so each
 			-- one keeps its custom settings instead of being auto-enabled bare.
 			automatic_enable = false,
