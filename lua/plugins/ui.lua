@@ -13,13 +13,12 @@ return {
 	{ "bettervim/yugen.nvim", lazy = true },
 	{ "olivercederborg/poimandres.nvim", lazy = true },
 
-	-- Colorize hex codes
+	-- Colorize hex codes (maintained fork; norcalli's is abandoned and
+	-- still calls the removed vim.tbl_flatten)
 	{
-		"norcalli/nvim-colorizer.lua",
+		"catgoose/nvim-colorizer.lua",
 		event = { "BufReadPost", "BufNewFile" },
-		config = function()
-			require("colorizer").setup()
-		end,
+		opts = {},
 	},
 
 	-- Which-Key (Keybind helper menu)
