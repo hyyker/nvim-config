@@ -1,3 +1,10 @@
+-- Leader (must be set before plugins load)
+vim.g.mapleader = " "
+vim.g.maplocalleader = " "
+
+-- Set the background before the colorscheme loads so it picks the right variant
+vim.opt.background = "dark"
+
 -- Disable mouse
 vim.opt.mouse = ""
 
@@ -20,8 +27,13 @@ vim.opt.relativenumber = true
 -- when diagnostics / git signs appear
 vim.opt.signcolumn = "yes"
 
--- Single global statusline (lualine renders it)
+-- Single global statusline (lualine renders it, including the mode)
 vim.opt.laststatus = 3
+vim.opt.showmode = false
+
+-- Show trailing whitespace and non-breaking spaces; keep tabs invisible
+vim.opt.list = true
+vim.opt.listchars = { tab = "  ", trail = "·", nbsp = "␣" }
 
 -- System clipboard
 vim.opt.clipboard = "unnamedplus"
@@ -29,8 +41,6 @@ vim.opt.clipboard = "unnamedplus"
 -- Search
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
-vim.opt.hlsearch = true
-vim.opt.incsearch = true
 
 -- Splits open where you'd expect
 vim.opt.splitright = true
@@ -49,3 +59,10 @@ vim.opt.timeoutlen = 400
 
 -- Confirm instead of erroring on unsaved changes
 vim.opt.confirm = true
+
+-- Diagnostics: inline text is off by default since 0.11, turn it back on
+vim.diagnostic.config({
+	virtual_text = true,
+	severity_sort = true,
+	float = { border = "rounded" },
+})

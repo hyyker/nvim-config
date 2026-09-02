@@ -25,7 +25,13 @@ return {
 	{
 		"folke/which-key.nvim",
 		event = "VeryLazy",
-		opts = {},
+		opts = {
+			spec = {
+				{ "<leader>b", group = "buffer" },
+				{ "<leader>c", group = "code" },
+				{ "<leader>f", group = "find" },
+			},
+		},
 	},
 
 	-- Dashboard, indent guides and misc QoL (replaces alpha-nvim + indent-blankline)

@@ -3,7 +3,10 @@ return {
 	{
 		"saghen/blink.cmp",
 		version = "1.*", -- tagged release ships a prebuilt fuzzy-matcher binary
-		event = "InsertEnter",
+		-- Not lazy-loaded: blink registers its LSP capabilities for every server
+		-- via vim.lsp.config("*") when it loads, and that must happen before the
+		-- first language server starts (blink defers its own heavy work anyway).
+		lazy = false,
 		dependencies = { "rafamadriz/friendly-snippets" },
 		opts = {
 			keymap = {
