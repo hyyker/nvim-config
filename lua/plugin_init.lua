@@ -13,4 +13,9 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- Load plugins
-require("lazy").setup("plugins")
+require("lazy").setup({
+	spec = { { import = "plugins" } },
+	install = { colorscheme = { "gruvbox" } },
+	-- Nothing here needs luarocks; this silences the hererocks checkhealth error
+	rocks = { enabled = false },
+})

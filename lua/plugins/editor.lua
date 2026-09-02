@@ -14,14 +14,6 @@ return {
 		},
 	},
 
-	--	-- GitHub Copilot
-	--	{
-	--		"zbirenbaum/copilot.lua",
-	--		event = "InsertEnter",
-	--		cmd = "Copilot",
-	--		config = true,
-	--	},
-
 	-- Git Signs (Gutter markers for Git changes)
 	{
 		"lewis6991/gitsigns.nvim",
@@ -34,15 +26,5 @@ return {
 		"windwp/nvim-autopairs",
 		event = "InsertEnter",
 		opts = {},
-	},
-
-	-- Highlight trailing whitespace
-	{
-		"ntpeters/vim-better-whitespace",
-		event = { "BufReadPost", "BufNewFile" },
-		init = function()
-			vim.g.better_whitespace_enabled = 1
-			vim.g.strip_whitespace_on_save = 0
-		end,
 	},
 }

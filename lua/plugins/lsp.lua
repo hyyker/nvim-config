@@ -10,114 +10,52 @@ return {
 		},
 	},
 
-	-- Mason (Package Manager for LSPs, formatters, etc.)
+	-- Mason (Package Manager for LSPs, formatters, etc.). The servers and
+	-- tools it should install are listed in plugins/tools.lua.
 	{
-		"williamboman/mason.nvim",
+		"mason-org/mason.nvim",
 		lazy = false,
-		config = function()
-			require("mason").setup()
-		end,
+		opts = {},
 	},
 
-	-- Mason LSP Config bridge
-	{
-		"williamboman/mason-lspconfig.nvim",
-		lazy = false,
-		dependencies = { "williamboman/mason.nvim" },
-		opts = {
-			ensure_installed = { "clangd", "pyright", "ruff", "lua_ls" },
-			-- Servers are enabled explicitly below via vim.lsp.enable(), so each
-			-- one keeps its custom settings instead of being auto-enabled bare.
-			automatic_enable = false,
-		},
-	},
-
-	-- Core LSP Configuration
+	-- Core LSP Configuration. nvim-lspconfig only provides the per-server
+	-- defaults (cmd, filetypes, root markers); our overrides live in
+	-- after/lsp/<server>.lua and are merged on top (see :help lsp-config).
+	-- blink.cmp registers its completion capabilities for every server via
+	-- vim.lsp.config("*"), so nothing needs to be passed through here.
 	{
 		"neovim/nvim-lspconfig",
 		lazy = false,
-		dependencies = {
-			"williamboman/mason-lspconfig.nvim",
-			"saghen/blink.cmp",
-		},
 		config = function()
-			local capabilities = require("blink.cmp").get_lsp_capabilities()
-
-			-- Global LspAttach Autocommand
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 				callback = function(ev)
 					local client = vim.lsp.get_client_by_id(ev.data.client_id)
-
-					-- Enable Inlay Hints if supported
-					if client and client:supports_method("textDocument/inlayHint") then
-						vim.lsp.inlay_hint.enable(true, { bufnr = ev.buf })
+					local function map(lhs, rhs, desc)
+						vim.keymap.set("n", lhs, rhs, { buffer = ev.buf, silent = true, desc = desc })
 					end
 
-					-- Keymaps (Buffer local)
-					local opts = { buffer = ev.buf, silent = true }
-					vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-					vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
-					vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
-					vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
-					vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-					vim.keymap.set("n", "<leader>cd", vim.diagnostic.open_float, opts)
-					vim.keymap.set("n", "<leader>ca", vim.lsp.buf.code_action, opts)
-					vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
-					vim.keymap.set("n", "[d", function()
-						vim.diagnostic.jump({ count = -1 })
-					end, opts)
-					vim.keymap.set("n", "]d", function()
-						vim.diagnostic.jump({ count = 1 })
-					end, opts)
+					-- Neovim ships grn / gra / grr / gri / K / [d / ]d by default,
+					-- these only add what's missing or nicer to reach.
+					map("gd", vim.lsp.buf.definition, "Go to definition")
+					map("gD", vim.lsp.buf.declaration, "Go to declaration")
+					map("<leader>cd", vim.diagnostic.open_float, "Line diagnostics")
+					map("<leader>ca", vim.lsp.buf.code_action, "Code action")
+					map("<leader>rn", vim.lsp.buf.rename, "Rename symbol")
+
+					-- Inlay hints: on by default where supported, with a toggle
+					if client and client:supports_method("textDocument/inlayHint") then
+						vim.lsp.inlay_hint.enable(true, { bufnr = ev.buf })
+						map("<leader>ch", function()
+							local enabled = vim.lsp.inlay_hint.is_enabled({ bufnr = ev.buf })
+							vim.lsp.inlay_hint.enable(not enabled, { bufnr = ev.buf })
+						end, "Toggle inlay hints")
+					end
 				end,
 			})
 
-			-- Configure Servers
-			vim.lsp.config.clangd = { capabilities = capabilities }
-			vim.lsp.enable("clangd")
-
-			vim.lsp.config.rust_analyzer = {
-				capabilities = capabilities,
-				settings = {
-					["rust-analyzer"] = {
-						imports = { granularity = { group = "module" }, prefix = "self" },
-						cargo = { buildScripts = { enable = true } },
-						procMacro = { enable = true },
-						checkOnSave = true,
-						check = { command = "clippy" },
-					},
-				},
-			}
-			vim.lsp.enable("rust_analyzer")
-
-			-- pyright for types, ruff for lint + import organisation.
-			vim.lsp.config.pyright = {
-				capabilities = capabilities,
-				settings = {
-					pyright = { disableOrganizeImports = true }, -- ruff owns this
-				},
-			}
-			vim.lsp.enable("pyright")
-
-			vim.lsp.config.ruff = {
-				capabilities = capabilities,
-				on_attach = function(client)
-					client.server_capabilities.hoverProvider = false -- let pyright hover
-				end,
-			}
-			vim.lsp.enable("ruff")
-
-			vim.lsp.config.lua_ls = {
-				capabilities = capabilities,
-				settings = {
-					Lua = {
-						runtime = { version = "LuaJIT" },
-						telemetry = { enable = false },
-					},
-				},
-			}
-			vim.lsp.enable("lua_ls")
+			-- rust-analyzer comes from rustup, the rest are installed by Mason.
+			vim.lsp.enable({ "clangd", "rust_analyzer", "pyright", "ruff", "lua_ls" })
 		end,
 	},
 }

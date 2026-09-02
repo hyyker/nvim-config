@@ -1,5 +1,6 @@
 -- General keymaps. Plugin- and LSP-specific maps live next to their config
--- (see lua/plugins/*).
+-- (see lua/plugins/*). Neovim's own LSP defaults (grn, gra, grr, gri, K,
+-- [d, ]d, ...) are left untouched, see :help lsp-defaults.
 
 local map = vim.keymap.set
 
